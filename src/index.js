@@ -4,6 +4,9 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import { connectDB } from "./config/db.js";
+import { auth } from "./lib/auth.js";
+import { toNodeHandler } from "better-auth/node";
+import { requireAuth } from "./middleware/auth.middleware.js";
 
 const app = express();
 const PORT = 5000;
@@ -16,11 +19,22 @@ app.use(
   })
 );
 
+// Better Auth routes
+app.all("/api/auth/*splat", toNodeHandler(auth));
+
 
 // Body parser
 app.use(express.json());
 
 
+// Protected user profile route
+app.get("/api/protected/me", requireAuth, (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "Authenticated user information",
+    user: req.user,
+  });
+});
 
 
 // Health check
