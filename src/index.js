@@ -7,6 +7,9 @@ import { connectDB } from "./config/db.js";
 import { auth } from "./lib/auth.js";
 import { toNodeHandler } from "better-auth/node";
 import { requireAuth } from "./middleware/auth.middleware.js";
+import dashboardRoutes from "./routes/dashboard.routes.js";
+import transactionRoutes from "./routes/transaction.routes.js";
+
 
 const app = express();
 const PORT = 5000;
@@ -26,6 +29,10 @@ app.all("/api/auth/*splat", toNodeHandler(auth));
 // Body parser
 app.use(express.json());
 
+
+// Routes Handlers
+app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/transactions", transactionRoutes);
 
 // Protected user profile route
 app.get("/api/protected/me", requireAuth, (req, res) => {
